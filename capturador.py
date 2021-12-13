@@ -16,7 +16,7 @@ def capture_dataset():
     cap = cv2.VideoCapture(camera, )
     modo_captura = True
     PATH = 'dataset/'
-    NAME = 'game.csv'
+    NAME = 'game_calixto.csv'
     FULL_NAME = PATH + NAME
 
     font = cv2.FONT_HERSHEY_COMPLEX
@@ -67,7 +67,7 @@ def capture_dataset():
 
                 if key == ord('b'):
                     # Empezar el Juego
-                    dim = (30, 30)
+                    dim = (300, 300)
                     ROI = cv2.resize(ROI, dim,  interpolation=cv2.INTER_LINEAR)
                     cv2.imwrite(PATH + name, ROI)
                     data = [name, 0]
