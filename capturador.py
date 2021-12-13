@@ -16,7 +16,7 @@ def capture_dataset():
     cap = cv2.VideoCapture(camera, )
     modo_captura = True
     PATH = 'dataset/'
-    NAME = 'game_INSERT_YOUR_NAME.csv'
+    NAME = 'game_insert_your_name.csv'
     FULL_NAME = PATH + NAME
 
     font = cv2.FONT_HERSHEY_COMPLEX
