@@ -1,26 +1,24 @@
 from tkinter import *
 from PIL import Image
 from PIL import ImageTk
-import imutils
-import time
 import tkinter.font as TkFont
-import numpy as np
 import torch
 import cv2
 import random
 from torchvision import transforms
 import time
-from threading import Timer,Thread,Event
 
 
 classes = ["Empezar", "Terminar", "Piedra", "Papel", "Tijera"]
 cap = None
+camara = 2
 victorias = 0
 empates = 0
 derrotas = 0
 th = 5
 x, y = 150, 50
 w = 300
+jugada = False
 
 
 class gui_play:
@@ -79,8 +77,8 @@ class gui_play:
         self.my_net = torch.load(file)
         print("Modelo Cargado")
 
-        global cap
-        cap = cv2.VideoCapture(2)
+        global cap, camara
+        cap = cv2.VideoCapture(camara)
 
         #Bandera indicadora del comienzo del juego
         self.iniciado = False
@@ -97,7 +95,7 @@ class gui_play:
         self.visualizar()
 
     def visualizar(self):
-        global cap
+        global cap, jugada
         global x, y, w, th
 
         if cap is not None:
@@ -110,13 +108,62 @@ class gui_play:
                 self.Video.configure(image=img)
                 self.Video.image = img
                 self.Video.after(10, self.visualizar)
+
+                if jugada:
+                    fin = time.time() #Tomamos lectura del tiempo
+
+                    if fin - inicio < 1.0:
+                       self.temporizador(2)
+                    elif 2.0 > fin - inicio > 1.0:
+                       self.temporizador(1)
+                    elif 3.0 > fin - inicio > 2.0:
+                       self.temporizador(0)
+                    elif fin - inicio > 3.0:
+                       jugada = False
+
+                       # Vuelves a hacer la predicción
+                       ret, frame = cap.read()
+                       imCrop = frame[y:y + w, x:x + w]  # ROI
+                       cv2.imwrite("jugada.jpg", imCrop)
+
+                       # Predicción usando el modelo
+                       raw = self.transform(imCrop).float()
+                       raw = raw.unsqueeze(0)
+                       # input_test = Variable(row)
+                       output = self.my_net(raw)
+                       idx = output.data.cpu().numpy().argmax()
+                       print(f'La predicción fue {classes[idx]} idx: {idx}')
+
+                       jugada_cpu = random.randint(2, 4)
+                       opciones_str = ["imgs/Piedra.jpeg", "imgs/Papel.jpeg", "imgs/Tijera.jpeg"]
+                       jugada_cpu_str = opciones_str[jugada_cpu - 2]
+                       print(f'La jugada del CPU fue {classes[jugada_cpu]} idx : {jugada_cpu}')
+
+                       # Se elige una imagen para la jugada del CPU
+                       image1 = cv2.imread(jugada_cpu_str, cv2.IMREAD_COLOR)
+                       image1 = cv2.resize(image1, (480, 480), cv2.INTER_LINEAR)
+                       image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)
+
+                       # Se muestra la imagen seleccionada por la CPU
+                       im1 = Image.fromarray(image1)
+                       img1 = ImageTk.PhotoImage(image=im1)
+                       self.lblImg1.configure(image=img1)
+                       self.lblImg1.image = img1
+
+                       self.txtplayer['text'] = f'Player: {classes[idx]}'
+                       self.txtCPU['text'] = f'CPU: {classes[jugada_cpu]}'
+
+                       # Ejecutamos la jugada
+                       self.logica(player=idx, cpu=jugada_cpu)
+
+
             else:
                 self.lblVideo.image = ""
                 cap.release()
 
     def Jugar(self):
 
-        global cap, inicio
+        global cap, inicio, jugada
         global classes
         global x, y, w
 
@@ -137,24 +184,13 @@ class gui_play:
 
         if idx == 0:
             self.iniciado = True
+            jugada = True
             inicio = time.time()
-            self.temporizador(2)
 
-            #Vuelves a hacer la predicción
-            ret, frame = cap.read()
-            imCrop = frame[y:y + w, x:x + w]  # ROI
-            cv2.imwrite("jugada.jpg", imCrop)
-
-            # Predicción usando el modelo
-            raw = self.transform(imCrop).float()
-            raw = raw.unsqueeze(0)
-            # input_test = Variable(row)
-            output = self.my_net(raw)
-            idx = output.data.cpu().numpy().argmax()
-            print(f'La predicción fue {classes[idx]} idx: {idx}')
 
         if idx == 1:
             self.iniciado = False
+
             # Se abre la imagen de juego finalizado
             image1 = cv2.imread("imgs/Finalizado.jpeg", cv2.IMREAD_COLOR)
             image1 = cv2.resize(image1, (480, 480), cv2.INTER_LINEAR)
@@ -165,41 +201,8 @@ class gui_play:
             self.lblImg1.image = img1
 
         if self.iniciado:
-            #fin = time.time()
-
-            #if inicio == 0:
-            #    inicio = time.time()
-            #    self.temporizador(2)
-
-            #if fin - inicio > 1.0:
-            #    self.temporizador(1)
-            #elif fin - inicio > 2.0:
-            #    self.temporizador(0)
-            #elif fin - inicio > 3.0:
-            #    inicio = 0
-
-            # Elección de la jugada por parte del CPU
-            jugada_cpu = random.randint(2, 4)
-            opciones_str = ["imgs/Piedra.jpeg", "imgs/Papel.jpeg", "imgs/Tijera.jpeg"]
-            jugada_cpu_str = opciones_str[jugada_cpu - 2]
-            print(f'La jugada del CPU fue {classes[jugada_cpu]} idx : {jugada_cpu}')
-
-            # Se elige una imagen para la jugada del CPU
-            image1 = cv2.imread(jugada_cpu_str, cv2.IMREAD_COLOR)
-            image1 = cv2.resize(image1, (480, 480), cv2.INTER_LINEAR)
-            image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)
-
-            # Se muestra la imagen seleccionada por la CPU
-            im1 = Image.fromarray(image1)
-            img1 = ImageTk.PhotoImage(image=im1)
-            self.lblImg1.configure(image=img1)
-            self.lblImg1.image = img1
-
-            self.txtplayer['text'] = f'Player: {classes[idx]}'
-            self.txtCPU['text'] = f'CPU: {classes[jugada_cpu]}'
-
-            # Ejecutamos la jugada
-            self.logica(player=idx, cpu=jugada_cpu)
+            jugada = True
+            inicio = time.time()
 
 
     def logica(self, player, cpu):
@@ -239,7 +242,7 @@ class gui_play:
         image1 = cv2.resize(image1, (480, 480), cv2.INTER_LINEAR)
         #cv2.imshow("Cuenta Regresiva", image1)
         #cv2.waitKey(0)
-        #image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)
+        image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)
 
         # Se muestra la imagen seleccionada por la CPU
         im1 = Image.fromarray(image1)
