@@ -19,6 +19,7 @@ def fit():
     batch_size = 10
 
     transform = transforms.Compose([
+        transforms.ToPILImage(),
         transforms.Resize((227, 227)),  # Cambiamos el tamaño al que recibe el AlexNet
         transforms.ToTensor(),  # Lo pasamos a Tensor
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalizamos
@@ -27,6 +28,7 @@ def fit():
     dataset = get_dataset(csv_file=file, root=root_images, transform=transform)
 
     train_size = int(0.8 * len(dataset))
+    print(train_size)
     test_size = len(dataset) - train_size
     train_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, test_size])
 
@@ -41,7 +43,7 @@ def fit():
 
     # Hiperparámetros
     lr = 0.01
-    epochs = 30
+    epochs = 5
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(alexnet.parameters(), lr)
 
@@ -58,6 +60,7 @@ def fit():
             outputs = alexnet(inputs)
             loss = loss_fn(outputs, labels)
             loss.backward()
+            optimizer.step()
             epoch_loss += loss.item()
 
             print(f'Época: {epoch + 1} Loss: {epoch_loss}')
@@ -65,15 +68,14 @@ def fit():
     print("Entrenamiento terminado")
     now = datetime.now()
     dt_str = now.strftime("%Y%m%d_%H%M%S")
-    torch.save(alexnet, f"Modelo_{dt_str}.pt")
+    torch.save(alexnet, f"dataset/Modelo_{dt_str}.pt")
 
-    return test_dataloader
+    file = 'dataset/Modelo_20211213_080518.pt'
+    evaluate(test_dataloader, 10, file)
 
 
-def evaluate(val_loader, batch):
+def evaluate(val_loader, batch, file):
     classes = ['Empezar', 'Terminar', 'Piedra', 'Papel', 'Tijera']
-    file = '.pt'
-    PATH = 'dataset/'
 
     # Evaluando la red neuronal
     dataiter = iter(val_loader)
@@ -88,7 +90,7 @@ def evaluate(val_loader, batch):
     imshow(torchvision.utils.make_grid(images))
     print("Ground truth: ", " ".join('%s' % classes[labels[j]] for j in range(batch)))
 
-    my_net = torch.load(PATH + file)
+    my_net = torch.load(file)
 
     outputs = my_net(images)
     _, predicted = torch.max(outputs, 1)
