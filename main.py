@@ -1,15 +1,14 @@
+import tkinter
 import numpy as np
-from tkinter import ttk
 from tkinter import *
 from capturador import capture_dataset
-from PIL import Image, ImageTk
-from itertools import count, cycle
+from PIL import Image
 #from model import fit
 
 #Este archivo desplegará un menú para seleccionar el tipo de acción que se realizará
 
 def openCapture():
-        capture_dataset()
+    capture_dataset()
     
 def quiteProgram():
     window.destroy()
@@ -18,7 +17,7 @@ def quiteProgram():
 #    fit()
 
 
-class Product:
+class MainApp:
     
     def __init__(self, window): 
         
@@ -40,58 +39,58 @@ class Product:
         
         # Title
         title_text = 'Welcome back my friend!'
-        title_label = Label(self.wind, text = title_text, pady = 24, padx = 24, fg = "#fff", 
+        title_label = tkinter.Label(self.wind, text = title_text, pady = 24, padx = 24, fg = "#fff", 
                             bg = "#d16a4d", font = ("Lato", 36, "bold"))
         title_label.grid(row = 0, column = 0)
         
         # Frame Container
         frame_text = "Select an option"
-        frame = LabelFrame(self.wind, text = frame_text, bd = 4, bg = wind_bg, 
+        frame = tkinter.LabelFrame(self.wind, text = frame_text, bd = 4, bg = wind_bg, 
                            padx = frame_pad, foreground = white, font=("Lato", 11))
         frame.grid(row = 1, column = 0, pady = frame_pad)
         
         # Play option
         play_text = 'Engage in an exciting battle against the machine.'
-        play_label = Label(frame, text = play_text, padx = 24, bg = wind_bg, 
+        play_label = tkinter.Label(frame, text = play_text, padx = 24, bg = wind_bg, 
                            pady = labels_pady, foreground = gray_light, font=("Heveltica", 10))
-        play_label.grid(row = 3, column = 0, sticky = W)
+        play_label.grid(row = 3, column = 0, sticky = "w")
         
-        play_button = Button(frame, text = 'PLAY', bg = button_color, foreground = white, 
+        play_button = tkinter.Button(frame, text = 'PLAY', bg = button_color, foreground = white, 
                              padx = button_padx, pady = 4, font=("Heveltica", 8, "bold"))
-        play_button.grid(row = 3, column = 1, sticky = W + E)
+        play_button.grid(row = 3, column = 1, sticky = "we")
         
         # Train option
         train_text = 'Too easy? Train the machine and make it invincible!'
-        train_label = Label(frame, text = train_text, padx = 24, bg = wind_bg, 
+        train_label = tkinter.Label(frame, text = train_text, padx = 24, bg = wind_bg, 
                             pady = labels_pady, foreground = gray_light, font=("Heveltica", 10))
-        train_label.grid(row = 4, column = 0, sticky = W)
+        train_label.grid(row = 4, column = 0, sticky = "w")
         
-        train_button = Button(frame, text = 'TRAIN', bg = button_color, foreground = white,  
+        train_button = tkinter.Button(frame, text = 'TRAIN', bg = button_color, foreground = white,  
                               padx = button_padx, pady = 4, font=("Heveltica", 8, "bold"))
-        train_button.grid(row = 4, column = 1, sticky = W + E)
+        train_button.grid(row = 4, column = 1, sticky = "we")
         
         # Capture option
         capture_text = 'To train you will need equipment. Capture your photos now.'
-        capture_label = Label(frame, text = capture_text, padx = 24, bg = wind_bg, 
+        capture_label = tkinter.Label(frame, text = capture_text, padx = 24, bg = wind_bg, 
                               pady = labels_pady, foreground = gray_light, font=("Heveltica", 10))
-        capture_label.grid(row = 5, column = 0, sticky = W)
+        capture_label.grid(row = 5, column = 0, sticky = "w")
         
-        capture_button = Button(frame, text = 'CAPTURE', command = openCapture, 
+        capture_button = tkinter.Button(frame, text = 'CAPTURE', command = openCapture, 
                                 bg = button_color, foreground = white, padx = button_padx, 
                                 pady = 4, font=("Heveltica", 8, "bold"))
-        capture_button.grid(row = 5, column = 1, sticky = W + E)
+        capture_button.grid(row = 5, column = 1, sticky = "we")
 
         # Animation
         file = 'animation_game.gif'
         info = Image.open(file)
         frames = info.n_frames
         
-        im = [PhotoImage(file=file, format=f'gif -index {i}') for i in range(frames)]
+        im = [tkinter.PhotoImage(file=file, format=f'gif -index {i}') for i in range(frames)]
 
         count = 0
         def animation(count): 
             im2 = im[count]
-            Label(self.wind, image = im2, bg = wind_bg).grid(row = 6, column = 0, sticky = W + E)
+            tkinter.Label(self.wind, image = im2, bg = wind_bg).grid(row = 6, column = 0, sticky = "we")
             
             count += 1
             if count == frames:
@@ -102,12 +101,12 @@ class Product:
         animation(count)
         
         # Exit button
-        exit_button = Button(self.wind, text = 'EXIT', command = quiteProgram, 
+        exit_button = tkinter.Button(self.wind, text = 'EXIT', command = quiteProgram, 
                              bg = "#002b91", foreground = "#fff", font=("Heveltica", 8, "bold"))
-        exit_button.grid(row = 7, column = 0, sticky = W + E)
+        exit_button.grid(row = 7, column = 0, sticky = "we")
     
 
 if __name__ == '__main__':
-    window = Tk()
-    application = Product(window)
+    window = tkinter.Tk()
+    application = MainApp(window)
     window.mainloop()
