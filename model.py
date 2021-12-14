@@ -43,7 +43,7 @@ def fit():
 
     # Hiperparámetros
     lr = 0.01
-    epochs = 5
+    epochs = 3
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(alexnet.parameters(), lr)
 
@@ -68,9 +68,8 @@ def fit():
     print("Entrenamiento terminado")
     now = datetime.now()
     dt_str = now.strftime("%Y%m%d_%H%M%S")
-    torch.save(alexnet, f"dataset/Modelo_{dt_str}.pt")
-
-    file = 'dataset/Modelo_20211213_080518.pt'
+    file = f"modelos/Modelo_{dt_str}.pt"
+    torch.save(alexnet, file)
     evaluate(test_dataloader, 10, file)
 
 
@@ -126,8 +125,6 @@ def evaluate(val_loader, batch, file):
     for i in range(5):
         print('Accuracy of %5s : %0.2f %%' % (
             classes[i], 100 * class_correct[i] / class_total[i]))
-
-
 
 
 test_dataloader = fit()

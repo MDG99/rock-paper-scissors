@@ -12,11 +12,11 @@ from datetime import datetime
 
 
 def capture_dataset():
-    camera = 0  # Webcam USB
+    camera = 2  # Webcam USB
     cap = cv2.VideoCapture(camera, )
     modo_captura = True
     PATH = 'dataset/'
-    NAME = 'game_insert_your_name.csv'
+    NAME = 'game.csv'
     FULL_NAME = PATH + NAME
 
     font = cv2.FONT_HERSHEY_COMPLEX
