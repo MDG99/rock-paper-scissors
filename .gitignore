@@ -1,7 +1,10 @@
 #Modelos
 *.pt 
 #Imágenes de entrenamiento
-dataset/*.jpg
+*.JPG
+*.jpe
+*.JPEG
+*.jpeg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
