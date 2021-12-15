@@ -2,7 +2,7 @@ import tkinter
 import numpy as np
 from tkinter import *
 from capturador import capture_dataset
-#from play import gui_play
+from play import gui_play
 from PIL import Image
 
 
@@ -18,9 +18,9 @@ def quite_program():
     window.destroy()
 
 
-#def start_game():
-    #file = 'modelos/Modelo_20211214_011643.pt'
-    #gui_play(file)
+def start_game():
+    file = 'modelos/Modelo_20211214_011643.pt'
+    gui_play(file)
     
 # def trainModel():
 #    fit()
@@ -61,7 +61,8 @@ class MainApp:
         # Play option
         play_text = 'Engage in an exciting battle against the machine.'
         play_label = tkinter.Label(frame, text=play_text, padx=24, bg=wind_bg,
-                                   pady=labels_pady, foreground=white, font=("Heveltica", 10))
+                                   pady=labels_pady, foreground=white, font=("Heveltica", 10),
+                                   command=start_game)
         play_label.grid(row=3, column=0, sticky="w")
 
         play_button = tkinter.Button(frame, text='PLAY', bg=button_color, foreground=black,
@@ -109,7 +110,7 @@ class MainApp:
 
             self.wind.after(250, lambda: animation(count))
             
-        animation(count)
+        
         
         # Exit button
         exit_button = tkinter.Button(self.wind, text='EXIT', command=quite_program,
