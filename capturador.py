@@ -22,7 +22,7 @@ class gui_capturador():
     def __init__(self):
 
         self.f = None
-        self.camara = 0
+        self.camara = 2
         self.PATH = 'dataset/'
         self.NAME = 'game.csv'
         self.FULL_NAME = self.PATH + self.NAME
@@ -74,7 +74,7 @@ class gui_capturador():
         self.btn6.grid(column=3, row=7, padx=5, pady=5)
 
         global cap
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(self.camara)
         self.visualizar()
 
     def visualizar(self):
