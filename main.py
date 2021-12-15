@@ -1,32 +1,10 @@
 import tkinter
-import numpy as np
-from tkinter import *
 from capturador import capture_dataset
-from play import gui_play
-from PIL import Image
+from play import play
+from model import fit
+from tkinter import messagebox
 
-
-# from model import fit
-
-# Este archivo desplegará un menú para seleccionar el tipo de acción que se realizará
-
-def open_capture():
-   capture_dataset()
-    
-
-def quite_program():
-    window.destroy()
-
-
-def start_game():
-    file = 'modelos/Modelo_20211214_011643.pt'
-    gui_play(file)
-    
-# def trainModel():
-#    fit()
-
-
-class MainApp:
+class MainApp_gui:
 
     def __init__(self, window):
         # Paddings
@@ -61,12 +39,12 @@ class MainApp:
         # Play option
         play_text = 'Engage in an exciting battle against the machine.'
         play_label = tkinter.Label(frame, text=play_text, padx=24, bg=wind_bg,
-                                   pady=labels_pady, foreground=white, font=("Heveltica", 10),
-                                   command=start_game)
+                                   pady=labels_pady, foreground=white, font=("Heveltica", 10))
         play_label.grid(row=3, column=0, sticky="w")
 
         play_button = tkinter.Button(frame, text='PLAY', bg=button_color, foreground=black,
-                                     padx=button_padx, pady=4, font=("Heveltica", 8, "bold"))
+                                     padx=button_padx, pady=4, font=("Heveltica", 8, "bold"),
+                                     command=self.start_game)
         play_button.grid(row=3, column=1, sticky="we")
 
         # Train option
@@ -76,7 +54,8 @@ class MainApp:
         train_label.grid(row=4, column=0, sticky="w")
 
         train_button = tkinter.Button(frame, text='TRAIN', bg=button_color, foreground=black,
-                                      padx=button_padx, pady=4, font=("Heveltica", 8, "bold"))
+                                      padx=button_padx, pady=4, font=("Heveltica", 8, "bold"),
+                                      command=self.train_model)
         train_button.grid(row=4, column=1, sticky="we")
 
         # Capture option
@@ -86,39 +65,30 @@ class MainApp:
         capture_label.grid(row=5, column=0, sticky="w")
 
         capture_button = tkinter.Button(frame, text='CAPTURE',
-                                        bg=button_color, foreground=black, 
-                                        command=open_capture, padx=button_padx,
+                                        bg=button_color, foreground=black,
+                                        command=self.open_capture, padx=button_padx,
                                         pady=4, font=("Heveltica", 8, "bold"))
         capture_button.grid(row=5, column=1, sticky="we")
 
-        # Animation
-        file = 'animation_game.gif'
-        info = Image.open(file)
-        frames = info.n_frames
-
-        im = [tkinter.PhotoImage(file=file, format=f'gif -index {i}') for i in range(frames)]
-
-        count = 0
-
-        def animation(count):
-            im2 = im[count]
-            tkinter.Label(self.wind, image=im2, bg=wind_bg).grid(row=6, column=0, sticky="we")
-
-            count += 1
-            if count == frames:
-                count = 0
-
-            self.wind.after(250, lambda: animation(count))
-            
-        
-        
         # Exit button
-        exit_button = tkinter.Button(self.wind, text='EXIT', command=quite_program,
+        exit_button = tkinter.Button(self.wind, text='EXIT', command=self.quite_program,
                                      bg="#002b91", foreground="#fff", font=("Heveltica", 8, "bold"))
         exit_button.grid(row=7, column=0, sticky="we")
 
+    def open_capture(self):
+        capture_dataset()
 
-if __name__ == '__main__':
-    window = tkinter.Tk()
-    application = MainApp(window)
-    window.mainloop()
+    def quite_program(self):
+        window.destroy()
+
+    def start_game(self):
+        play()
+
+    def train_model(self):
+        msg = fit()
+        messagebox.showinfo(message=msg, title="Entrenamiento terminado")
+
+
+window = tkinter.Tk()
+application = MainApp_gui(window)
+window.mainloop()

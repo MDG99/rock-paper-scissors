@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 
 
 def fit():
+
     device = torch.device('cpu')
     classes = 5
 
@@ -26,6 +27,7 @@ def fit():
     ])
 
     dataset = get_dataset(csv_file=file, root=root_images, transform=transform)
+
 
     train_size = int(0.8 * len(dataset))
     print(train_size)
@@ -72,6 +74,9 @@ def fit():
     torch.save(alexnet, file)
     evaluate(test_dataloader, 10, file)
 
+    msg = "Modelo guardado como: " + file
+    return msg
+
 
 def evaluate(val_loader, batch, file):
     classes = ['Empezar', 'Terminar', 'Piedra', 'Papel', 'Tijera']
@@ -86,7 +91,7 @@ def evaluate(val_loader, batch, file):
         plt.imshow(np.transpose(npimg, (1, 2, 0)))
         plt.show()
 
-    imshow(torchvision.utils.make_grid(images))
+    #imshow(torchvision.utils.make_grid(images))
     print("Ground truth: ", " ".join('%s' % classes[labels[j]] for j in range(batch)))
 
     my_net = torch.load(file)
@@ -127,5 +132,3 @@ def evaluate(val_loader, batch, file):
             classes[i], 100 * class_correct[i] / class_total[i]))
 
 
-test_dataloader = fit()
-#evaluate(test_dataloader, 10)

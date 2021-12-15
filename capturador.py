@@ -28,7 +28,7 @@ class gui_capturador():
         self.FULL_NAME = self.PATH + self.NAME
         self.writer = None
         self.ROI = None
-        self.ventana = Tk()
+        self.ventana = Toplevel()
         self.ventana.title("Imágenes de entrenamiento")
 
         # Componentes del GUI
@@ -185,5 +185,6 @@ class gui_capturador():
 def capture_dataset():
     my_app = gui_capturador()
     my_app.ventana.mainloop()
+    my_app.ventana.destroy()
 
 #capture_dataset()

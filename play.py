@@ -24,7 +24,7 @@ jugada = False
 class gui_play:
     def __init__(self, file):
 
-        self.ventana = Tk()
+        self.ventana = Toplevel()
         #self.ventana.geometry("1100x600")
         self.ventana.title("Juego")
 
@@ -251,7 +251,8 @@ class gui_play:
         self.lblImg1.image = img1
 
 
+def play():
+    file = 'modelos/Modelo_20211214_011643.pt'
+    my_app = gui_play(file)
+    my_app.ventana.mainloop()
 
-file = 'modelos/Modelo_20211214_011643.pt'
-my_app = gui_play(file)
-my_app.ventana.mainloop()
