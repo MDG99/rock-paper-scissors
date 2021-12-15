@@ -28,7 +28,7 @@ class gui_capturador():
         self.writer = None
         self.ROI = None
         self.ventana = Tk()
-        self.ventana.title("Juego")
+        self.ventana.title("Imágenes de entrenamiento")
 
         # Componentes del GUI
         self.fontformat_title = TkFont.Font(family="Arial", size=15, weight="bold")
