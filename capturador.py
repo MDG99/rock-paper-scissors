@@ -18,6 +18,7 @@ cap = None
 
 
 class gui_capturador():
+    
     def __init__(self):
 
         self.f = None
@@ -185,4 +186,4 @@ def capture_dataset():
     my_app = gui_capturador()
     my_app.ventana.mainloop()
 
-capture_dataset()
+#capture_dataset()
